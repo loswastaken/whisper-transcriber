@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Transcriber</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Transcriber</h1>
+    <p class="note">Transcripts auto-delete after 24 hours. Anyone on the home network can see this page and its transcripts.</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="new-heading">
+      <h2 id="new-heading">New transcription</h2>
+      <form id="url-form" autocomplete="off">
+        <label for="url-input">Media link (YouTube or other site)</label>
+        <div class="row">
+          <input id="url-input" type="url" inputmode="url" placeholder="https://www.youtube.com/watch?v=…" required>
+          <button type="submit" id="url-submit">Transcribe</button>
+        </div>
+      </form>
+
+      <div id="drop" class="drop" tabindex="-1">
+        <p>Drop an audio or video file here, or</p>
+        <label class="button secondary" for="file-input">Choose file</label>
+        <input id="file-input" type="file" class="visually-hidden"
+               accept=".mp3,.mp4,.wav,.m4a,.mkv,.webm,.ogg,.flac,.mov,.aac,.opus,audio/*,video/*">
+        <p class="hint">mp3, mp4, wav, m4a, mkv, webm, ogg, flac, mov, aac, opus · up to 2 GB · up to 6 hours</p>
+        <div id="upload-status" class="upload-status" hidden>
+          <span id="upload-label"></span>
+          <progress id="upload-progress" max="100" value="0"></progress>
+        </div>
+      </div>
+      <p id="form-message" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card" aria-labelledby="jobs-heading">
+      <h2 id="jobs-heading">Jobs</h2>
+      <p id="jobs-empty" class="hint">No jobs yet.</p>
+      <ul id="jobs" class="jobs"></ul>
+    </section>
+
+    <section class="card" id="transcript-card" aria-labelledby="transcript-heading" hidden>
+      <h2 id="transcript-heading">Transcript</h2>
+      <p id="transcript-meta" class="hint"></p>
+      <div class="actions">
+        <button type="button" id="copy-btn" class="primary">Copy</button>
+        <a id="dl-txt" class="button secondary" href="#" download>Download TXT</a>
+        <a id="dl-srt" class="button secondary" href="#" download>Download SRT</a>
+        <button type="button" id="stop-btn" class="danger" hidden>Stop</button>
+        <button type="button" id="delete-btn" class="danger">Delete</button>
+      </div>
+      <p id="transcript-status" class="message" role="status" aria-live="polite"></p>
+      <textarea id="transcript" readonly rows="16" aria-label="Transcript text"></textarea>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Native macOS on Apple Silicon (scripts/run-mac.sh, WHISPER_BACKEND=mlx).
+# Not used by the Docker image, which installs requirements.txt.
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+python-multipart==0.0.20
+# app/transcribe_mlx.py hooks the progress bar in mlx_whisper/transcribe.py;
+# re-check that hook (and tests/test_backends.py) before bumping this pin.
+mlx-whisper==0.4.3
+# Keep in step with YTDLP_VERSION in the Dockerfile. run-mac.sh reinstalls
+# when this file changes.
+yt-dlp[default]==2025.11.12

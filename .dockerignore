@@ -1,0 +1,16 @@
+.git
+.gitignore
+.dockerignore
+**/__pycache__
+**/*.pyc
+tests
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.patch
+README.md
+CONTRIBUTING.md
+LICENSE
+compose.yaml
+scripts
+requirements-mac.txt

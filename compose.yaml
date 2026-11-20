@@ -1,0 +1,42 @@
+services:
+  transcriber:
+    build:
+      context: .
+      args:
+        IMAGE_SOURCE: "https://github.com/loswastaken/whisper-transcriber"
+        GIT_REVISION: "${GIT_REVISION:-unknown}"
+        YTDLP_VERSION: "${YTDLP_VERSION:-2025.11.12}"
+        DENO_VERSION: "${DENO_VERSION:-2.5.0}"
+    image: transcriber:local
+    container_name: transcriber
+    restart: unless-stopped
+    init: true
+    ports:
+      # Publish on localhost only by default. Use "8090:8090" to serve your LAN
+      # (trusted networks only; there is no login).
+      - "127.0.0.1:8090:8090"
+    volumes:
+      - transcriber-data:/data
+      - transcriber-models:/models
+    environment:
+      DATA_DIR: /data
+      HF_HOME: /models
+      WHISPER_BACKEND: faster-whisper
+      MODEL_NAME: large-v3-turbo
+      COMPUTE_TYPE: int8
+      DEVICE: cpu
+      CPU_THREADS: "4"   # raise to your core count
+      RETENTION_HOURS: "24"
+      MAX_UPLOAD_BYTES: "2147483648"
+      MAX_MEDIA_SECONDS: "21600"
+      PORT: "8090"
+    mem_limit: 6g
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  transcriber-data:
+  transcriber-models:
