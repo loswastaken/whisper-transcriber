@@ -30,7 +30,7 @@ RUN python -c "import zipfile; zipfile.ZipFile('/tmp/deno.zip').extract('deno', 
     && deno --version
 
 # yt-dlp in its own layer so bumping YTDLP_VERSION rebuilds only from here.
-ARG YTDLP_VERSION=2025.11.12
+ARG YTDLP_VERSION=2026.11.23
 RUN pip install --no-cache-dir "yt-dlp[default]==${YTDLP_VERSION}" \
     && yt-dlp --version
 

@@ -7,6 +7,7 @@ import logging
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import threading
 from typing import Callable, List, Optional, Tuple
@@ -21,6 +22,8 @@ FFMPEG_TIMEOUT_SECONDS = 2 * 3600
 FFPROBE_TIMEOUT_SECONDS = 120
 TITLE_PREFIX = "TRANSCRIBER-TITLE:"
 # Executables; the tests point these at small Python stand-ins.
+# YTDLP_CMD stays a bare name so tests can replace the whole argv. download()
+# rewrites a leading "yt-dlp" to the copy installed beside this interpreter.
 YTDLP_CMD: List[str] = ["yt-dlp"]
 FFMPEG_CMD: List[str] = ["ffmpeg"]
 FFPROBE_CMD: List[str] = ["ffprobe"]
@@ -28,6 +31,30 @@ FFPROBE_CMD: List[str] = ["ffprobe"]
 _PROGRESS = re.compile(r"\[download\]\s+(\d+(?:\.\d+)?)%")
 _ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
 _SKIP_SUFFIXES = (".part", ".ytdl", ".temp", ".tmp")
+
+
+def ytdlp_executable() -> str:
+    """yt-dlp installed beside this interpreter, or the bare name for PATH.
+
+    pip puts the console script in ``sys.prefix/bin``. That is the venv ``bin``
+    when the Mac app is started with the venv's Python, including under a
+    LaunchAgent whose PATH is ``/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin``.
+    The absolute path is what ``Popen`` runs. With no script there (a test
+    interpreter, or an install that is only on PATH), the bare name is returned
+    and the lookup uses PATH.
+    """
+    bundled = os.path.join(sys.prefix, "bin", "yt-dlp")
+    if os.path.isfile(bundled) and os.access(bundled, os.X_OK):
+        return bundled
+    return "yt-dlp"
+
+
+def ytdlp_argv() -> List[str]:
+    """``YTDLP_CMD``, with a leading bare ``yt-dlp`` passed through ``ytdlp_executable``."""
+    argv = list(YTDLP_CMD)
+    if argv and argv[0] == "yt-dlp":
+        argv[0] = ytdlp_executable()
+    return argv
 
 
 def _ytdlp_error(output_tail: str) -> str:
@@ -56,7 +83,7 @@ def download(url: str, job_dir: str, max_media_seconds: int,
 
     Raises JobCancelled if cancel is set while yt-dlp runs.
     """
-    cmd = YTDLP_CMD + [
+    cmd = ytdlp_argv() + [
         "--ignore-config",
         "--no-playlist",
         "--progress",

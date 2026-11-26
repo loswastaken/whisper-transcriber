@@ -8,4 +8,4 @@ python-multipart==0.0.20
 mlx-whisper==0.4.3
 # Keep in step with YTDLP_VERSION in the Dockerfile. run-mac.sh reinstalls
 # when this file changes.
-yt-dlp[default]==2025.11.12
+yt-dlp[default]==2026.11.23

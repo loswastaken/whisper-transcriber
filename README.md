@@ -166,7 +166,11 @@ scripts/stop-mac.sh
   `python3.12` (or `python3.12` on `PATH`, or `uv` if neither exists), creates a
   venv in `~/Apps/transcriber/venv` and installs `requirements-mac.txt` into it.
   It installs again only when that file changes, so after `git pull` just run the
-  script again. The Python packages (mlx, torch and others) are a large download.
+  script again. Before the server starts, the script puts that venv's `bin` on
+  `PATH`. A LaunchAgent otherwise leaves `PATH` as
+  `/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin`, so downloads invoke the
+  `yt-dlp` installed next to the app's own Python. The Python packages (mlx,
+  torch and others) are a large download.
 - Everything lives under `APP_HOME` (default `~/Apps/transcriber`): `data/` (jobs),
   `models/` (Hugging Face cache, `HF_HOME`), `venv/` and `transcriber.pid`.
   `DATA_DIR`, `HF_HOME`, `PORT`, `MLX_MODEL` and the other settings can be

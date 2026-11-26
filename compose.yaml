@@ -5,7 +5,7 @@ services:
       args:
         IMAGE_SOURCE: "https://github.com/loswastaken/whisper-transcriber"
         GIT_REVISION: "${GIT_REVISION:-unknown}"
-        YTDLP_VERSION: "${YTDLP_VERSION:-2025.11.12}"
+        YTDLP_VERSION: "${YTDLP_VERSION:-2026.11.23}"
         DENO_VERSION: "${DENO_VERSION:-2.5.0}"
     image: transcriber:local
     container_name: transcriber
