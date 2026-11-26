@@ -20,6 +20,9 @@ STAMP="$VENV/.requirements-mac.sha256"
 PIDFILE="$APP_HOME/transcriber.pid"
 
 # Homebrew and user-installed ffmpeg, ffprobe, deno and uv.
+# $VENV/bin is prepended below, after the venv exists, so yt-dlp resolves under
+# a LaunchAgent PATH of /opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin.
+# app/fetch.py resolves that same script from sys.prefix as well.
 export PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
 
 if [[ -f "$PIDFILE" ]]; then
@@ -75,6 +78,15 @@ if [[ ! -f "$STAMP" || "$(cat "$STAMP")" != "$want" ]]; then
   echo "Installing requirements-mac.txt into $VENV"
   "$VENV/bin/python" -m pip install --disable-pip-version-check -r "$REQS"
   echo "$want" > "$STAMP"
+fi
+
+# Prepend after the venv is in place so console scripts (yt-dlp) win over any
+# older copy elsewhere on PATH. The directory is created above.
+export PATH="$VENV/bin:$PATH"
+
+if [[ ! -x "$VENV/bin/yt-dlp" ]]; then
+  echo "yt-dlp is not installed in $VENV. Remove $VENV and run this script again." >&2
+  exit 1
 fi
 
 for tool in ffmpeg ffprobe; do
